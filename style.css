@@ -1,0 +1,252 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#000;
+    overflow:hidden;
+    color:#fff;
+}
+
+/* MENU */
+
+#menu{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    background:#000;
+    z-index:1000;
+}
+
+#menu h1{
+    font-size:60px;
+    letter-spacing:4px;
+    color:#c00000;
+    text-shadow:0 0 20px red;
+}
+
+#menu p{
+    margin:20px;
+    color:#bbb;
+}
+
+#menu button{
+    padding:15px 40px;
+    font-size:20px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#8b0000;
+    color:white;
+    transition:.3s;
+}
+
+#menu button:hover{
+    background:#d10000;
+    transform:scale(1.05);
+}
+
+/* JOGO */
+
+#game{
+    display:none;
+    width:100vw;
+    height:100vh;
+    justify-content:center;
+    align-items:center;
+    background:#080808;
+}
+
+#room{
+    position:relative;
+    width:900px;
+    height:550px;
+    border:5px solid #222;
+    background:linear-gradient(#242424,#101010);
+    box-shadow:0 0 60px #000 inset;
+}
+
+/* OBJETOS */
+
+.object{
+    position:absolute;
+    font-size:60px;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.object:hover{
+    transform:scale(1.15);
+}
+
+/* POSIÇÕES */
+
+#door{
+    left:720px;
+    top:180px;
+}
+
+#cabinet{
+    left:120px;
+    top:240px;
+}
+
+#painting{
+    left:360px;
+    top:90px;
+}
+
+#window{
+    left:560px;
+    top:60px;
+}
+
+#key{
+    left:150px;
+    top:360px;
+    font-size:45px;
+}
+
+/* FANTASMA */
+
+#ghost{
+    position:absolute;
+    left:430px;
+    top:140px;
+    font-size:130px;
+    opacity:0;
+    transition:.2s;
+}
+
+/* HUD */
+
+#hud{
+    display:none;
+    position:absolute;
+    top:20px;
+    left:20px;
+    z-index:100;
+}
+
+#batteryBox{
+    margin-bottom:15px;
+}
+
+#battery{
+    width:220px;
+    height:20px;
+    border:2px solid white;
+}
+
+#batteryLevel{
+    width:100%;
+    height:100%;
+    background:lime;
+}
+
+/* OBJETIVO */
+
+#objective{
+    padding:12px;
+    background:rgba(0,0,0,.6);
+    border:1px solid #444;
+}
+
+/* CAIXA */
+
+#messageBox{
+    display:none;
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    width:420px;
+    padding:25px;
+    background:#111;
+    border:2px solid #666;
+    text-align:center;
+    z-index:999;
+}
+
+#messageBox button{
+    margin-top:20px;
+    padding:10px 20px;
+}
+
+/* VITÓRIA */
+
+#victory{
+    display:none;
+    position:absolute;
+    inset:0;
+    background:black;
+    color:#00ff66;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:2000;
+}
+
+/* GAME OVER */
+
+#gameOver{
+    display:none;
+    position:absolute;
+    inset:0;
+    background:black;
+    color:red;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:2000;
+}
+
+#victory h1,
+#gameOver h1{
+    font-size:70px;
+    margin-bottom:30px;
+}
+
+#victory button,
+#gameOver button{
+    padding:15px 40px;
+    font-size:20px;
+    cursor:pointer;
+}
+
+/* UTILITÁRIO */
+
+.hidden{
+    display:none;
+}
+
+/* EFEITO DE PISCAR */
+
+@keyframes flash{
+    0%{opacity:0;}
+    50%{opacity:1;}
+    100%{opacity:0;}
+}
+
+.flash{
+    animation:flash .4s linear;
+}
+
+/* TELA ESCURA */
+
+body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:radial-gradient(circle,
+    rgba(255,255,255,.02) 0%,
+    rgba(0,0,0,.35) 40%,
+    rgba(0,0,0,.92) 100%);
+}
