@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Forgotten House</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Tela Inicial -->
+    <div id="menu">
+        <h1>THE FORGOTTEN HOUSE</h1>
+        <p>Uma casa abandonada esconde um segredo...</p>
+
+        <button id="playBtn">JOGAR</button>
+    </div>
+
+    <!-- HUD -->
+    <div id="hud">
+
+        <div id="batteryBox">
+            🔦 Bateria:
+            <div id="battery">
+                <div id="batteryLevel"></div>
+            </div>
+        </div>
+
+        <div id="objective">
+            Objetivo:
+            <span>Encontre a chave.</span>
+        </div>
+
+    </div>
+
+    <!-- Jogo -->
+    <div id="game">
+
+        <div id="room">
+
+            <div id="door" class="object">
+                🚪
+            </div>
+
+            <div id="cabinet" class="object">
+                🗄️
+            </div>
+
+            <div id="painting" class="object">
+                🖼️
+            </div>
+
+            <div id="window" class="object">
+                🪟
+            </div>
+
+            <div id="key" class="object hidden">
+                🗝️
+            </div>
+
+            <div id="ghost" class="hidden">
+                👤
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Caixa de diálogo -->
+    <div id="messageBox">
+        <p id="message">
+            ...
+        </p>
+
+        <button id="closeMessage">
+            Fechar
+        </button>
+    </div>
+
+    <!-- Game Over -->
+    <div id="gameOver">
+
+        <h1>VOCÊ MORREU</h1>
+
+        <button onclick="location.reload()">
+            Jogar Novamente
+        </button>
+
+    </div>
+
+    <!-- Vitória -->
+    <div id="victory">
+
+        <h1>VOCÊ ESCAPOU!</h1>
+
+        <button onclick="location.reload()">
+            Jogar Novamente
+        </button>
+
+    </div>
+
+    <!-- Sons -->
+    <audio id="ambient" loop>
+        <source src="sounds/ambient.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="doorSound">
+        <source src="sounds/door.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="jumpSound">
+        <source src="sounds/jumpscare.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="pickupSound">
+        <source src="sounds/pickup.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
