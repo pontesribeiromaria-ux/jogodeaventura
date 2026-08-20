@@ -3,53 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>A Floresta Esquecida</title>
-
+    <title>A Casa do Quarto 13</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <div class="background"></div>
+    <div class="noise"></div>
 
-    <div class="game-container">
+    <header class="topo">
+        <div>
+            <h1>🏚️ A Casa do Quarto 13</h1>
+            <p>Algumas portas deveriam permanecer fechadas.</p>
+        </div>
 
-        <header class="topo">
+        <button id="btnMenu" class="botao-menu">☰</button>
+    </header>
 
-            <div>
-                <h1>🌲 A Floresta Esquecida</h1>
-                <p class="subtitulo">
-                    Nem toda escolha pode ser desfeita...
-                </p>
-            </div>
+    <main>
 
-            <button class="menu-btn" onclick="abrirMenu()">
-                ☰
-            </button>
-
-        </header>
-
-
+        <!-- STATUS -->
         <section class="status">
 
-            <div class="status-item">
+            <div class="status-card">
                 <span>❤️</span>
                 <div>
-                    <small>VIDA</small>
-                    <strong id="vida">100</strong>
+                    <small>SANIDADE</small>
+                    <strong id="sanidade">100</strong>
                 </div>
             </div>
 
-            <div class="status-item">
-                <span>💰</span>
+            <div class="status-card">
+                <span>🔦</span>
                 <div>
-                    <small>MOEDAS</small>
-                    <strong id="moedas">0</strong>
+                    <small>BATERIA</small>
+                    <strong id="bateria">100%</strong>
                 </div>
             </div>
 
-            <div class="status-item">
+            <div class="status-card">
                 <span>📖</span>
                 <div>
                     <small>CAPÍTULO</small>
@@ -59,127 +51,113 @@
 
         </section>
 
-
-        <div class="barra-vida">
-            <div id="barraVida"></div>
+        <div class="barra">
+            <div id="barraSanidade"></div>
         </div>
 
-
-        <main class="historia-container">
+        <!-- HISTÓRIA -->
+        <section class="historia">
 
             <div class="local">
-                <span id="iconeLocal">🌲</span>
-                <span id="nomeLocal">A estrada</span>
+                <span id="iconeLocal">🏚️</span>
+                <span id="nomeLocal">Entrada da casa</span>
             </div>
 
-            <h2 id="titulo">
-                Acordando na floresta
-            </h2>
+            <h2 id="tituloCena">A porta</h2>
 
-            <div class="imagem-local" id="imagemLocal">
-                🌫️
+            <div class="imagem-cena" id="imagemCena">
+                🚪
             </div>
 
             <div class="texto">
-                <p id="historia"></p>
+                <p id="historiaTexto"></p>
             </div>
 
-            <div id="dialogo"></div>
+            <div id="dialogo" class="dialogo"></div>
 
-            <div class="opcoes" id="opcoes"></div>
+            <div id="opcoes" class="opcoes"></div>
 
-        </main>
+        </section>
 
-
-        <section class="inventario">
+        <!-- INVENTÁRIO -->
+        <section class="painel">
 
             <h3>🎒 Inventário</h3>
 
-            <div id="itens">
-                <span class="vazio">
-                    Você não possui itens.
-                </span>
+            <div id="inventario" class="inventario">
+                <p class="vazio">Você não possui itens.</p>
             </div>
 
         </section>
 
+        <!-- OBJETIVO -->
+        <section class="painel">
 
-        <section class="objetivos">
-
-            <h3>📜 Objetivos</h3>
+            <h3>🎯 Objetivo</h3>
 
             <p id="objetivo">
-                Descubra onde você está.
+                Descubra o que existe dentro da casa.
             </p>
 
         </section>
 
+        <!-- BOTÕES -->
+        <section class="acoes">
 
-        <footer>
+            <button id="btnSalvar">💾 Salvar</button>
+            <button id="btnCarregar">📂 Carregar</button>
+            <button id="btnInventario">🎒 Inventário</button>
 
-            <button onclick="salvarJogo()">
-                💾 Salvar
-            </button>
+        </section>
 
-            <button onclick="carregarJogo()">
-                📂 Carregar
-            </button>
+    </main>
 
-            <button onclick="abrirInventario()">
-                🎒 Inventário
-            </button>
+    <!-- MODAL DO INVENTÁRIO -->
+    <div id="modalInventario" class="modal escondido">
 
-        </footer>
+        <div class="modal-caixa">
+
+            <button class="fechar" id="fecharInventario">×</button>
+
+            <h2>🎒 Inventário</h2>
+
+            <div id="inventarioModal"></div>
+
+        </div>
 
     </div>
 
+    <!-- MENU -->
+    <div id="modalMenu" class="modal escondido">
 
-    <div id="menu" class="modal">
+        <div class="modal-caixa">
 
-        <div class="modal-content">
+            <button class="fechar" id="fecharMenu">×</button>
 
-            <button class="fechar" onclick="fecharMenu()">
-                ×
-            </button>
+            <h2>☰ Menu</h2>
 
-            <h2>⚙️ Menu</h2>
-
-            <button onclick="salvarJogo(); fecharMenu();">
-                💾 Salvar jogo
-            </button>
-
-            <button onclick="carregarJogo(); fecharMenu();">
-                📂 Carregar jogo
-            </button>
-
-            <button onclick="reiniciarJogo()">
+            <button id="menuNovo" class="menu-opcao">
                 🔄 Novo jogo
             </button>
 
-        </div>
-
-    </div>
-
-
-    <div id="modalInventario" class="modal">
-
-        <div class="modal-content inventario-modal">
-
-            <button class="fechar" onclick="fecharInventario()">
-                ×
+            <button id="menuSalvar" class="menu-opcao">
+                💾 Salvar jogo
             </button>
 
-            <h2>🎒 Seu Inventário</h2>
-
-            <div id="inventarioGrande"></div>
+            <button id="menuCarregar" class="menu-opcao">
+                📂 Carregar jogo
+            </button>
 
         </div>
 
     </div>
 
+    <!-- NOTIFICAÇÃO -->
+    <div id="notificacao" class="notificacao"></div>
 
-    <div id="notificacao"></div>
-
+    <footer>
+        <p>A Casa do Quarto 13 • Jogo de aventura e terror</p>
+    </footer>
 
     <script src="script.js"></script>
 

@@ -1,1175 +1,928 @@
-// ==========================================
-// A FLORESTA ESQUECIDA
-// SISTEMA PRINCIPAL DO JOGO
-// ==========================================
+/* =====================================================
+   A CASA DO QUARTO 13
+   Jogo de aventura e terror
+   ===================================================== */
 
 
-// ------------------------------------------
-// ESTADO DO JOGADOR
-// ------------------------------------------
+/* =====================================================
+   ESTADO DO JOGADOR
+   ===================================================== */
 
 let jogador = {
-
-    vida: 100,
-
-    maxVida: 100,
-
-    moedas: 0,
-
+    sanidade: 100,
+    bateria: 100,
     capitulo: 1,
-
-    local: "estrada",
 
     inventario: [],
 
-    escolhas: [],
+    flags: {
+        portaAberta: false,
+        encontrouBilhete: false,
+        viuRetrato: false,
+        pegouChave: false,
+        ouviuTelefone: false,
+        ligouTelefone: false,
+        abriuQuarto13: false,
+        encontrouDiario: false,
+        descobriuNome: false,
+        encontrouSalaSecreta: false,
+        viuEspelho: false,
+        pegouMedalhao: false,
+        acendeuPorão: false,
+        descobriuFinal: false
+    },
 
-    flags: {},
+    cenaAtual: "entrada",
 
-    finais: [],
-
-    progresso: 0
+    finais: []
 };
 
 
-// ------------------------------------------
-// ELEMENTOS HTML
-// ------------------------------------------
-
-const vidaElement =
-    document.getElementById("vida");
-
-const moedasElement =
-    document.getElementById("moedas");
-
-const capituloElement =
-    document.getElementById("capitulo");
-
-const barraVida =
-    document.getElementById("barraVida");
-
-const tituloElement =
-    document.getElementById("titulo");
-
-const historiaElement =
-    document.getElementById("historia");
-
-const opcoesElement =
-    document.getElementById("opcoes");
-
-const inventarioElement =
-    document.getElementById("itens");
-
-const objetivoElement =
-    document.getElementById("objetivo");
-
-const localElement =
-    document.getElementById("nomeLocal");
-
-const iconeLocalElement =
-    document.getElementById("iconeLocal");
-
-const imagemLocalElement =
-    document.getElementById("imagemLocal");
-
-const dialogoElement =
-    document.getElementById("dialogo");
-
-
-// ------------------------------------------
-// BANCO DE ITENS
-// ------------------------------------------
+/* =====================================================
+   ITENS
+   ===================================================== */
 
 const itens = {
 
     chave: {
-        nome: "Chave enferrujada",
-        emoji: "🔑",
-        descricao:
-            "Uma chave antiga coberta de ferrugem."
+        nome: "🔑 Chave enferrujada",
+        descricao: "Uma chave antiga encontrada perto da escada."
     },
 
-    cristal: {
-        nome: "Cristal verde",
-        emoji: "💎",
-        descricao:
-            "Um cristal que parece pulsar com energia."
+    bilhete: {
+        nome: "📜 Bilhete",
+        descricao: "Um pedaço de papel com uma mensagem estranha."
     },
 
-    mapa: {
-        nome: "Mapa antigo",
-        emoji: "🗺️",
-        descricao:
-            "Um mapa mostrando lugares que não deveriam existir."
+    lanterna: {
+        nome: "🔦 Lanterna",
+        descricao: "Uma lanterna velha. Ainda possui alguma bateria."
     },
 
-    tocha: {
-        nome: "Tocha",
-        emoji: "🔥",
-        descricao:
-            "Uma tocha capaz de iluminar lugares escuros."
-    },
-
-    amuleto: {
-        nome: "Amuleto",
-        emoji: "🔮",
-        descricao:
-            "Um pequeno amuleto encontrado em uma ruína."
-    },
-
-    espada: {
-        nome: "Espada antiga",
-        emoji: "⚔️",
-        descricao:
-            "Uma espada velha, mas ainda afiada."
-    },
-
-    pocao: {
-        nome: "Poção",
-        emoji: "🧪",
-        descricao:
-            "Recupera 30 pontos de vida."
-    },
-
-    fragmento: {
-        nome: "Fragmento sombrio",
-        emoji: "🖤",
-        descricao:
-            "Uma pedra escura que parece absorver a luz."
+    diario: {
+        nome: "📕 Diário",
+        descricao: "Um diário antigo encontrado na casa."
     },
 
     medalhao: {
-        nome: "Medalhão",
-        emoji: "📿",
-        descricao:
-            "Um medalhão com o símbolo da floresta."
-    }
+        nome: "🧿 Medalhão",
+        descricao: "Um medalhão com o símbolo de um olho."
+    },
 
+    fotografia: {
+        nome: "📷 Fotografia",
+        descricao: "Uma fotografia antiga da família que viveu aqui."
+    },
+
+    codigo: {
+        nome: "🔢 Código",
+        descricao: "O número 1313 escrito em uma folha."
+    },
+
+    fita: {
+        nome: "📼 Fita VHS",
+        descricao: "Uma fita sem identificação."
+    }
 };
 
 
-// ------------------------------------------
-// LOCAIS
-// ------------------------------------------
+/* =====================================================
+   ELEMENTOS DA PÁGINA
+   ===================================================== */
 
-const locais = {
+const sanidadeEl = document.getElementById("sanidade");
+const bateriaEl = document.getElementById("bateria");
+const capituloEl = document.getElementById("capitulo");
 
-    estrada: {
-        nome: "Estrada abandonada",
-        icone: "🛣️",
-        imagem: "🌫️"
-    },
+const barraSanidade = document.getElementById("barraSanidade");
 
-    floresta: {
-        nome: "Floresta",
-        icone: "🌲",
-        imagem: "🌲"
-    },
+const iconeLocal = document.getElementById("iconeLocal");
+const nomeLocal = document.getElementById("nomeLocal");
 
-    cabana: {
-        nome: "Cabana abandonada",
-        icone: "🏚️",
-        imagem: "🏚️"
-    },
+const tituloCena = document.getElementById("tituloCena");
+const imagemCena = document.getElementById("imagemCena");
 
-    rio: {
-        nome: "Rio escuro",
-        icone: "🌊",
-        imagem: "🌊"
-    },
+const historiaTexto = document.getElementById("historiaTexto");
+const dialogo = document.getElementById("dialogo");
+const opcoes = document.getElementById("opcoes");
 
-    ruinas: {
-        nome: "Ruínas antigas",
-        icone: "🏛️",
-        imagem: "🏛️"
-    },
+const inventarioEl = document.getElementById("inventario");
+const inventarioModal = document.getElementById("inventarioModal");
 
-    torre: {
-        nome: "Torre esquecida",
-        icone: "🏰",
-        imagem: "🏰"
-    },
+const objetivoEl = document.getElementById("objetivo");
 
-    caverna: {
-        nome: "Caverna",
-        icone: "🕳️",
-        imagem: "🪨"
-    },
-
-    templo: {
-        nome: "Templo da floresta",
-        icone: "⛩️",
-        imagem: "🔮"
-    },
-
-    lago: {
-        nome: "Lago da Lua",
-        icone: "🌙",
-        imagem: "🌙"
-    }
-
-};
+const notificacao = document.getElementById("notificacao");
 
 
-// ------------------------------------------
-// FUNÇÕES DE INTERFACE
-// ------------------------------------------
+/* =====================================================
+   UTILIDADES
+   ===================================================== */
 
-function atualizarInterface() {
-
-    vidaElement.textContent =
-        Math.max(0, jogador.vida);
-
-    moedasElement.textContent =
-        jogador.moedas;
-
-    capituloElement.textContent =
-        jogador.capitulo;
-
-    let porcentagem =
-        (jogador.vida / jogador.maxVida) * 100;
-
-    porcentagem =
-        Math.max(0, Math.min(100, porcentagem));
-
-    barraVida.style.width =
-        porcentagem + "%";
-
-    atualizarInventario();
-
-    atualizarLocal();
-
-    atualizarObjetivo();
+function possuiItem(id) {
+    return jogador.inventario.includes(id);
 }
 
-
-function atualizarLocal() {
-
-    const local =
-        locais[jogador.local];
-
-    if (!local) return;
-
-    localElement.textContent =
-        local.nome;
-
-    iconeLocalElement.textContent =
-        local.icone;
-
-    imagemLocalElement.textContent =
-        local.imagem;
-}
-
-
-function atualizarInventario() {
-
-    inventarioElement.innerHTML = "";
-
-    if (jogador.inventario.length === 0) {
-
-        inventarioElement.innerHTML =
-            `<span class="vazio">
-                Você não possui itens.
-            </span>`;
-
-        return;
-    }
-
-
-    jogador.inventario.forEach(id => {
-
-        const item =
-            itens[id];
-
-        if (!item) return;
-
-        const elemento =
-            document.createElement("div");
-
-        elemento.className =
-            "item";
-
-        elemento.innerHTML =
-            `${item.emoji} ${item.nome}`;
-
-        inventarioElement.appendChild(
-            elemento
-        );
-
-    });
-
-}
-
-
-function atualizarObjetivo() {
-
-    const objetivos = {
-
-        1:
-            "Descubra onde você está e encontre uma saída da floresta.",
-
-        2:
-            "Encontre a cabana abandonada e descubra o segredo da chave.",
-
-        3:
-            "Explore as ruínas e descubra a origem da floresta.",
-
-        4:
-            "Encontre a entrada da caverna.",
-
-        5:
-            "Descubra como chegar ao templo.",
-
-        6:
-            "Encontre os três símbolos antigos.",
-
-        7:
-            "Chegue à Torre Esquecida.",
-
-        8:
-            "Decida o destino da floresta."
-
-    };
-
-
-    objetivoElement.textContent =
-        objetivos[jogador.capitulo] ||
-        objetivos[8];
-}
-
-
-// ------------------------------------------
-// NARRAÇÃO
-// ------------------------------------------
-
-function mostrarCena(
-    titulo,
-    texto,
-    opcoes = [],
-    dialogo = ""
-) {
-
-    tituloElement.textContent =
-        titulo;
-
-    historiaElement.textContent =
-        texto;
-
-    dialogoElement.innerHTML = "";
-
-    if (dialogo) {
-
-        dialogoElement.innerHTML =
-            `<div class="dialogo-caixa">
-                ${dialogo}
-            </div>`;
-
-    }
-
-
-    opcoesElement.innerHTML = "";
-
-
-    opcoes.forEach(opcao => {
-
-        const botao =
-            document.createElement("button");
-
-        botao.className =
-            "opcao";
-
-        if (opcao.perigosa) {
-
-            botao.classList.add(
-                "perigosa"
-            );
-
-        }
-
-        botao.textContent =
-            opcao.texto;
-
-        botao.onclick =
-            opcao.acao;
-
-        opcoesElement.appendChild(
-            botao
-        );
-
-    });
-
-
-    atualizarInterface();
-}
-
-
-// ------------------------------------------
-// SISTEMA DE ITENS
-// ------------------------------------------
 
 function adicionarItem(id) {
 
-    if (!itens[id]) return;
-
-    if (
-        jogador.inventario.includes(id)
-    ) {
-
-        mostrarNotificacao(
-            "Você já possui este item."
-        );
-
-        return false;
+    if (!itens[id]) {
+        return;
     }
 
+    if (possuiItem(id)) {
+        mostrarNotificacao("Você já possui este item.");
+        return;
+    }
 
     jogador.inventario.push(id);
 
-    mostrarNotificacao(
-        `${itens[id].emoji} ${itens[id].nome} adquirido!`
-    );
-
     atualizarInterface();
 
-    return true;
+    mostrarNotificacao(
+        "Item encontrado: " + itens[id].nome
+    );
 }
 
 
 function removerItem(id) {
 
-    const indice =
-        jogador.inventario.indexOf(id);
+    const index = jogador.inventario.indexOf(id);
 
-    if (indice === -1)
-        return false;
-
-    jogador.inventario.splice(
-        indice,
-        1
-    );
-
-    atualizarInterface();
-
-    return true;
-}
-
-
-function possuiItem(id) {
-
-    return jogador.inventario.includes(
-        id
-    );
-
-}
-
-
-// ------------------------------------------
-// VIDA
-// ------------------------------------------
-
-function perderVida(valor) {
-
-    jogador.vida -= valor;
-
-    jogador.vida =
-        Math.max(
-            0,
-            jogador.vida
-        );
-
-    atualizarInterface();
-
-    if (jogador.vida <= 0) {
-
-        finalMorte();
-
-        return true;
+    if (index !== -1) {
+        jogador.inventario.splice(index, 1);
     }
 
-    return false;
-}
-
-
-function recuperarVida(valor) {
-
-    jogador.vida += valor;
-
-    jogador.vida =
-        Math.min(
-            jogador.maxVida,
-            jogador.vida
-        );
-
     atualizarInterface();
 }
 
 
-// ------------------------------------------
-// MOEDAS
-// ------------------------------------------
+function perderSanidade(valor) {
 
-function ganharMoedas(valor) {
+    jogador.sanidade -= valor;
 
-    jogador.moedas += valor;
-
-    mostrarNotificacao(
-        `💰 +${valor} moedas`
-    );
-
-    atualizarInterface();
-}
-
-
-function gastarMoedas(valor) {
-
-    if (
-        jogador.moedas < valor
-    ) {
-
-        mostrarNotificacao(
-            "Você não possui moedas suficientes."
-        );
-
-        return false;
+    if (jogador.sanidade < 0) {
+        jogador.sanidade = 0;
     }
-
-
-    jogador.moedas -= valor;
 
     atualizarInterface();
 
-    return true;
+    if (jogador.sanidade <= 0) {
+        finalSanidade();
+    }
 }
 
 
-// ------------------------------------------
-// CAPÍTULO 1
-// ------------------------------------------
+function gastarBateria(valor) {
 
-function iniciarJogo() {
+    jogador.bateria -= valor;
 
-    jogador.capitulo = 1;
-
-    jogador.local =
-        "estrada";
-
-    mostrarCena(
-
-        "Acordando na floresta",
-
-        "Você abre os olhos lentamente. " +
-        "A primeira coisa que percebe é o frio. " +
-        "A segunda é que não sabe onde está. " +
-        "Uma estrada coberta por neblina se estende à sua frente. " +
-        "Ao seu redor existem árvores enormes. " +
-        "Nenhum pássaro canta. Nenhum inseto faz barulho.",
-
-        [
-
-            {
-                texto:
-                    "🌲 Entrar na floresta",
-
-                acao:
-                    entrarFloresta
-            },
-
-            {
-                texto:
-                    "🛣️ Seguir pela estrada",
-
-                acao:
-                    seguirEstrada
-            },
-
-            {
-                texto:
-                    "🔍 Examinar o local",
-
-                acao:
-                    examinarEstrada
-            }
-
-        ],
-
-        "Uma voz distante sussurra seu nome..."
-    );
-}
-
-
-function examinarEstrada() {
-
-    if (
-        !possuiItem("mapa")
-    ) {
-
-        adicionarItem("mapa");
-
-        mostrarCena(
-
-            "O mapa",
-
-            "Debaixo de algumas folhas você encontra " +
-            "um pedaço de papel dobrado. " +
-            "É um mapa antigo da região. " +
-            "Há três lugares marcados: uma cabana, " +
-            "uma torre e um templo.",
-
-            [
-
-                {
-                    texto:
-                        "🌲 Entrar na floresta",
-
-                    acao:
-                        entrarFloresta
-                },
-
-                {
-                    texto:
-                        "🛣️ Seguir pela estrada",
-
-                    acao:
-                        seguirEstrada
-                }
-
-            ]
-
-        );
-
+    if (jogador.bateria < 0) {
+        jogador.bateria = 0;
     }
 
-}
+    atualizarInterface();
 
-
-function seguirEstrada() {
-
-    jogador.local =
-        "estrada";
-
-    mostrarCena(
-
-        "A estrada abandonada",
-
-        "Você segue pela estrada. " +
-        "A neblina fica mais espessa conforme avança. " +
-        "Depois de alguns minutos, você encontra uma pequena cabana. " +
-        "Uma luz fraca aparece pela janela.",
-
-        [
-
-            {
-                texto:
-                    "🏚️ Entrar na cabana",
-
-                acao:
-                    entrarCabana
-            },
-
-            {
-                texto:
-                    "🌲 Ir para a floresta",
-
-                acao:
-                    entrarFloresta
-            },
-
-            {
-                texto:
-                    "👀 Observar a cabana de longe",
-
-                acao:
-                    observarCabana
-            }
-
-        ]
-
-    );
-
-}
-
-
-function observarCabana() {
-
-    mostrarCena(
-
-        "A janela",
-
-        "Você observa a cabana pela janela. " +
-        "Existe alguém sentado diante de uma mesa. " +
-        "A pessoa parece estar esperando por você.",
-
-        [
-
-            {
-                texto:
-                    "🚪 Entrar",
-
-                acao:
-                    entrarCabana
-            },
-
-            {
-                texto:
-                    "🏃 Ir embora",
-
-                acao:
-                    entrarFloresta
-            }
-
-        ]
-
-    );
-
-}
-
-
-// ------------------------------------------
-// FLORESTA
-// ------------------------------------------
-
-function entrarFloresta() {
-
-    jogador.local =
-        "floresta";
-
-    mostrarCena(
-
-        "A floresta",
-
-        "As árvores fecham o caminho atrás de você. " +
-        "Você tenta voltar, mas não consegue encontrar " +
-        "a estrada. Então percebe três caminhos: " +
-        "um leva até um rio, outro até algumas ruínas " +
-        "e o terceiro desce por uma trilha escura.",
-
-        [
-
-            {
-                texto:
-                    "🌊 Ir até o rio",
-
-                acao:
-                    irRio
-            },
-
-            {
-                texto:
-                    "🏛️ Explorar as ruínas",
-
-                acao:
-                    irRuinas
-            },
-
-            {
-                texto:
-                    "🌑 Seguir a trilha escura",
-
-                acao:
-                    trilhaEscura,
-                perigosa:
-                    true
-            },
-
-            {
-                texto:
-                    "🏚️ Procurar a cabana",
-
-                acao:
-                    procurarCabana
-            }
-
-        ]
-
-    );
-
-}
-
-
-function procurarCabana() {
-
-    jogador.local =
-        "floresta";
-
-    mostrarCena(
-
-        "A cabana escondida",
-
-        "Depois de caminhar entre as árvores, " +
-        "você finalmente encontra a cabana. " +
-        "A porta está entreaberta.",
-
-        [
-
-            {
-                texto:
-                    "🏚️ Entrar",
-
-                acao:
-                    entrarCabana
-            },
-
-            {
-                texto:
-                    "🌲 Voltar",
-
-                acao:
-                    entrarFloresta
-            }
-
-        ]
-
-    );
-
-}
-
-
-// ------------------------------------------
-// CABANA
-// ------------------------------------------
-
-function entrarCabana() {
-
-    jogador.capitulo = 2;
-
-    jogador.local =
-        "cabana";
-
-    mostrarCena(
-
-        "A cabana",
-
-        "O interior da cabana está coberto de poeira. " +
-        "Há livros espalhados pelo chão. " +
-        "No centro existe uma mesa com uma vela acesa. " +
-        "Você tem certeza de que a vela não estava acesa quando entrou.",
-
-        [
-
-            {
-                texto:
-                    "📚 Examinar os livros",
-
-                acao:
-                    examinarLivros
-            },
-
-            {
-                texto:
-                    "🕯️ Examinar a vela",
-
-                acao:
-                    examinarVela
-            },
-
-            {
-                texto:
-                    "🚪 Procurar outro cômodo",
-
-                acao:
-                    procurarQuarto
-            }
-
-        ],
-
-        "??? — Finalmente você chegou."
-    );
-
-}
-
-
-function examinarLivros() {
-
-    if (
-        !possuiItem("chave")
-    ) {
-
-        adicionarItem("chave");
-
+    if (jogador.bateria <= 0) {
+        mostrarNotificacao("A bateria da lanterna acabou.");
     }
-
-
-    mostrarCena(
-
-        "O diário",
-
-        "Entre os livros você encontra um diário. " +
-        "A maior parte das páginas está ilegível. " +
-        "Na última página existe uma frase: " +
-        "\"A chave abre o caminho, mas não a saída.\" " +
-        "Junto ao diário existe uma pequena chave.",
-
-        [
-
-            {
-                texto:
-                    "🔑 Pegar a chave",
-
-                acao:
-                    depoisDiario
-            },
-
-            {
-                texto:
-                    "🚪 Procurar outro cômodo",
-
-                acao:
-                    procurarQuarto
-            }
-
-        ]
-
-    );
-
 }
 
 
-function depoisDiario() {
+function mostrarNotificacao(texto) {
 
-    adicionarItem("chave");
+    notificacao.textContent = texto;
 
-    procurarQuarto();
+    notificacao.classList.add("mostrar");
 
+    setTimeout(() => {
+        notificacao.classList.remove("mostrar");
+    }, 2500);
 }
 
 
-function examinarVela() {
+/* =====================================================
+   INTERFACE
+   ===================================================== */
 
-    mostrarCena(
+function atualizarInterface() {
 
-        "A chama",
+    sanidadeEl.textContent = jogador.sanidade;
 
-        "A chama da vela fica azul por alguns segundos. " +
-        "Então você percebe uma sombra atrás de você. " +
-        "Quando se vira, não há ninguém.",
+    bateriaEl.textContent = jogador.bateria + "%";
 
-        [
+    capituloEl.textContent = jogador.capitulo;
 
-            {
-                texto:
-                    "🏃 Sair da cabana",
+    barraSanidade.style.width =
+        jogador.sanidade + "%";
 
-                acao:
-                    entrarFloresta
-            },
+    atualizarInventario();
 
-            {
-                texto:
-                    "🔎 Procurar a origem da sombra",
-
-                acao:
-                    procurarQuarto
-            }
-
-        ]
-
-    );
-
+    atualizarObjetivo();
 }
 
 
-function procurarQuarto() {
+function atualizarInventario() {
 
-    mostrarCena(
+    if (jogador.inventario.length === 0) {
 
-        "O quarto",
+        inventarioEl.innerHTML =
+            '<p class="vazio">Você não possui itens.</p>';
 
-        "No fundo da cabana existe uma pequena porta. " +
-        "Ela possui uma fechadura antiga.",
-
-        [
-
-            {
-                texto:
-                    "🔑 Usar a chave",
-
-                acao:
-                    abrirQuarto
-            },
-
-            {
-                texto:
-                    "🚪 Voltar",
-
-                acao:
-                    entrarCabana
-            }
-
-        ]
-
-    );
-
-}
-
-
-function abrirQuarto() {
-
-    if (
-        !possuiItem("chave")
-    ) {
-
-        mostrarCena(
-
-            "Trancado",
-
-            "Você precisa de uma chave.",
-
-            [
-
-                {
-                    texto:
-                        "📚 Procurar nos livros",
-
-                    acao:
-                        examinarLivros
-                }
-
-            ]
-
-        );
+        inventarioModal.innerHTML =
+            '<p class="vazio">Você não possui itens.</p>';
 
         return;
     }
 
+    let html = "";
 
-    jogador.capitulo = 3;
+    jogador.inventario.forEach(id => {
 
-    mostrarCena(
+        html += `
+            <div class="item">
+                ${itens[id].nome}
+            </div>
+        `;
 
-        "O quarto secreto",
+    });
 
-        "A porta se abre. Dentro existe uma pequena sala subterrânea. " +
-        "Nas paredes há desenhos da floresta. " +
-        "Um deles mostra uma criatura segurando um cristal.",
+    inventarioEl.innerHTML = html;
 
-        [
+    let detalhes = "";
+
+    jogador.inventario.forEach(id => {
+
+        detalhes += `
+            <div class="painel">
+                <strong>${itens[id].nome}</strong>
+                <p>${itens[id].descricao}</p>
+            </div>
+        `;
+
+    });
+
+    inventarioModal.innerHTML = detalhes;
+}
+
+
+function atualizarObjetivo() {
+
+    let objetivo = "Descubra o que aconteceu nesta casa.";
+
+    if (!jogador.flags.portaAberta) {
+        objetivo = "Entre na casa abandonada.";
+    }
+
+    else if (!jogador.flags.encontrouBilhete) {
+        objetivo = "Procure alguma pista dentro da casa.";
+    }
+
+    else if (!jogador.flags.pegouChave) {
+        objetivo = "Encontre uma maneira de abrir as portas trancadas.";
+    }
+
+    else if (!jogador.flags.abriuQuarto13) {
+        objetivo = "Descubra onde fica o Quarto 13.";
+    }
+
+    else if (!jogador.flags.encontrouDiario) {
+        objetivo = "Descubra o segredo da casa.";
+    }
+
+    else {
+        objetivo = "Descubra a verdade e encontre uma saída.";
+    }
+
+    objetivoEl.textContent = objetivo;
+}
+
+
+/* =====================================================
+   SISTEMA DE CENAS
+   ===================================================== */
+
+function mostrarCena(cena) {
+
+    jogador.cenaAtual = cena;
+
+    const dados = cenas[cena];
+
+    if (!dados) {
+        console.error("Cena não encontrada:", cena);
+        return;
+    }
+
+    iconeLocal.textContent = dados.icone;
+
+    nomeLocal.textContent = dados.local;
+
+    tituloCena.textContent = dados.titulo;
+
+    imagemCena.textContent = dados.imagem;
+
+    historiaTexto.textContent = dados.texto;
+
+    /* diálogo */
+
+    if (dados.dialogo) {
+
+        dialogo.textContent = dados.dialogo;
+
+        dialogo.classList.add("ativo");
+
+    } else {
+
+        dialogo.textContent = "";
+
+        dialogo.classList.remove("ativo");
+    }
+
+    /* opções */
+
+    opcoes.innerHTML = "";
+
+    dados.opcoes.forEach(opcao => {
+
+        const botao = document.createElement("button");
+
+        botao.className = "opcao";
+
+        botao.textContent = opcao.texto;
+
+        botao.addEventListener("click", () => {
+
+            if (typeof opcao.acao === "function") {
+                opcao.acao();
+            }
+
+        });
+
+        opcoes.appendChild(botao);
+
+    });
+
+    atualizarInterface();
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+
+/* =====================================================
+   CENAS DO JOGO
+   ===================================================== */
+
+const cenas = {
+
+
+    /* =================================================
+       INÍCIO
+       ================================================= */
+
+    entrada: {
+
+        icone: "🏚️",
+
+        local: "Entrada da casa",
+
+        titulo: "A porta",
+
+        imagem: "🚪",
+
+        texto:
+            "A chuva cai forte quando você encontra uma casa abandonada no meio da estrada.\n\n" +
+            "Seu celular está sem sinal. A bateria está quase acabando.\n\n" +
+            "Você tenta voltar pelo caminho por onde veio, mas percebe que não consegue mais enxergar a estrada.\n\n" +
+            "Então ouve três batidas vindas de dentro da casa.\n\n" +
+            "Toc. Toc. Toc.",
+
+        opcoes: [
 
             {
-                texto:
-                    "💎 Pegar o cristal",
+                texto: "🚪 Abrir a porta",
+                acao: () => {
 
-                acao:
-                    pegarCristal
+                    jogador.flags.portaAberta = true;
+
+                    mostrarCena("sala");
+
+                }
             },
 
             {
-                texto:
-                    "🗺️ Examinar os desenhos",
+                texto: "🏃 Tentar voltar pela estrada",
+                acao: () => {
 
-                acao:
-                    examinarDesenhos
+                    perderSanidade(5);
+
+                    mostrarCena("estrada");
+
+                }
+            },
+
+            {
+                texto: "👂 Escutar atrás da porta",
+                acao: () => {
+
+                    perderSanidade(8);
+
+                    mostrarCena("escutarPorta");
+
+                }
             }
 
         ]
 
-    );
-
-}
+    },
 
 
-function pegarCristal() {
+    /* =================================================
+       ESTRADA
+       ================================================= */
 
-    adicionarItem("cristal");
+    estrada: {
 
-    mostrarCena(
+        icone: "🌧️",
 
-        "O cristal verde",
+        local: "Estrada",
 
-        "Assim que você toca no cristal, todas as velas da cabana se acendem. " +
-        "Uma voz ecoa pela sala: \"Agora ela sabe que você está aqui.\"", 
+        titulo: "A estrada desapareceu",
 
-        [
+        imagem: "🌫️",
+
+        texto:
+            "Você corre de volta pela estrada.\n\n" +
+            "Depois de alguns minutos, percebe algo impossível.\n\n" +
+            "A casa continua exatamente na sua frente.\n\n" +
+            "Você olha para trás.\n\n" +
+            "Não existe mais estrada.\n\n" +
+            "Só uma parede de neblina.",
+
+        dialogo:
+            "Uma voz atrás de você sussurra: \"Você já esteve aqui antes.\"",
+
+        opcoes: [
 
             {
-                texto:
-                    "🏃 Fugir da cabana",
-
-                acao:
-                    entrarFloresta
+                texto: "🏚️ Voltar para a casa",
+                acao: () => mostrarCena("sala")
             },
 
             {
-                texto:
-                    "🔎 Continuar investigando",
+                texto: "🌫️ Entrar na neblina",
+                acao: () => {
 
-                acao:
-                    examinarDesenhos
+                    perderSanidade(25);
+
+                    mostrarCena("nevoeiro");
+
+                }
             }
 
         ]
 
-    );
-
-}
+    },
 
 
-function examinarDesenhos() {
+    /* =================================================
+       ESCUTAR PORTA
+       ================================================= */
 
-    adicionarItem("amuleto");
+    escutarPorta: {
 
-    mostrarCena(
+        icone: "🚪",
 
-        "O símbolo",
+        local: "Entrada",
 
-        "Você encontra um desenho que mostra três símbolos: " +
-        "a lua, a árvore e o olho. " +
-        "Abaixo deles existe uma frase: " +
-        "\"Quando os três se encontrarem, a porta despertará.\"", 
+        titulo: "Do outro lado",
 
-        [
+        imagem: "👂",
+
+        texto:
+            "Você aproxima o ouvido da porta.\n\n" +
+            "Silêncio.\n\n" +
+            "Então escuta uma respiração lenta.\n\n" +
+            "Ela está do outro lado.\n\n" +
+            "Você se afasta rapidamente.\n\n" +
+            "A maçaneta começa a girar sozinha.",
+
+        opcoes: [
 
             {
-                texto:
-                    "🏛️ Ir para as ruínas",
+                texto: "🚪 Abrir imediatamente",
+                acao: () => {
 
-                acao:
-                    irRuinas
+                    jogador.flags.portaAberta = true;
+
+                    mostrarCena("sala");
+
+                }
             },
 
             {
-                texto:
-                    "🌲 Voltar para a floresta",
+                texto: "🏃 Correr",
+                acao: () => {
 
-                acao:
-                    entrarFloresta
+                    perderSanidade(15);
+
+                    mostrarCena("estrada");
+
+                }
             }
 
         ]
 
-    );
-
-}
+    },
 
 
-// ------------------------------------------
-// RIO
-// ------------------------------------------
+    /* =================================================
+       SALA
+       ================================================= */
 
-function irRio() {
+    sala: {
 
-    jogador.local =
-        "rio";
+        icone: "🕯️",
 
-    mostrarCena(
+        local: "Sala principal",
 
-        "O rio escuro",
+        titulo: "A sala",
 
-        "Você chega a um rio de águas extremamente escuras. " +
-        "No meio dele existe uma pequena ilha. " +
-        "Algo brilha sobre uma pedra.",
+        imagem: "🕯️",
 
-        [
+        texto:
+            "A porta se fecha atrás de você.\n\n" +
+            "A casa cheira a madeira velha e poeira.\n\n" +
+            "Há um sofá coberto por um lençol, um relógio parado e vários retratos nas paredes.\n\n" +
+            "No fundo da sala existe uma escada que leva ao andar superior.\n\n" +
+            "Uma pequena mesa possui um bilhete sobre ela.",
+
+        opcoes: [
 
             {
-                texto:
-                    "🌊 Atravessar o rio",
+                texto: "📜 Ler o bilhete",
+                acao: () => {
 
-                acao:
-                    atravessarRio,
-                perigosa:
-                    true
+                    jogador.flags.encontrouBilhete = true;
+
+                    adicionarItem("bilhete");
+
+                    mostrarCena("bilhete");
+
+                }
             },
 
             {
-                texto:
-                    "🔎 Procurar outro caminho",
+                texto: "🖼️ Examinar os retratos",
+                acao: () => mostrarCena("retratos")
+            },
+
+            {
+                texto: "🪜 Subir as escadas",
+                acao: () => mostrarCena("corredor")
+            },
+
+            {
+                texto: "🚪 Tentar abrir a porta de saída",
+                acao: () => mostrarCena("portaSaida")
+            }
+
+        ]
+
+    },
+
+
+    /* =================================================
+       BILHETE
+       ================================================= */
+
+    bilhete: {
+
+        icone: "📜",
+
+        local: "Sala principal",
+
+        titulo: "O bilhete",
+
+        imagem: "📜",
+
+        texto:
+            "O papel está amarelado.\n\n" +
+            "A mensagem diz:\n\n" +
+            "\"Se você está lendo isto, não suba para o segundo andar depois da meia-noite.\"\n\n" +
+            "Abaixo da mensagem existe outra frase, escrita com uma letra diferente:\n\n" +
+            "\"Ela escuta os passos.\"",
+
+        opcoes: [
+
+            {
+                texto: "🖼️ Examinar os retratos",
+                acao: () => mostrarCena("retratos")
+            },
+
+            {
+                texto: "🪜 Ignorar o aviso e subir",
+                acao: () => {
+
+                    perderSanidade(10);
+
+                    mostrarCena("corredor");
+
+                }
+            },
+
+            {
+                texto: "🔎 Procurar algo atrás do bilhete",
+                acao: () => {
+
+                    adicionarItem("chave");
+
+                    jogador.flags.pegouChave = true;
+
+                    mostrarCena("chave");
+
+                }
+            }
+
+        ]
+
+    },
+
+
+    /* =================================================
+       RETRATOS
+       ================================================= */
+
+    retratos: {
+
+        icone: "🖼️",
+
+        local: "Sala",
+
+        titulo: "Os retratos",
+
+        imagem: "👤",
+
+        texto:
+            "Você examina os retratos.\n\n" +
+            "Todos mostram a mesma família.\n\n" +
+            "Um homem.\n" +
+            "Uma mulher.\n" +
+            "Uma criança.\n\n" +
+            "Mas há algo estranho.\n\n" +
+            "Em todos os retratos, a criança está olhando diretamente para você.",
+
+        dialogo:
+            "Você sente que está sendo observado.",
+
+        opcoes: [
+
+            {
+                texto: "📷 Pegar uma fotografia",
+                acao: () => {
+
+                    adicionarItem("fotografia");
+
+                    jogador.flags.viuRetrato = true;
+
+                    mostrarCena("sala");
+
+                }
+            },
+
+            {
+                texto: "👁️ Continuar olhando",
+                acao: () => {
+
+                    perderSanidade(12);
+
+                    mostrarCena("retratoOlhar");
+
+                }
+            },
+
+            {
+                texto: "🪜 Subir as escadas",
+                acao: () => mostrarCena("corredor")
+            }
+
+        ]
+
+    },
+
+
+    /* =================================================
+       RETRATO
+       ================================================= */
+
+    retratoOlhar: {
+
+        icone: "👁️",
+
+        local: "Sala",
+
+        titulo: "Ela mudou de posição",
+
+        imagem: "🖼️",
+
+        texto:
+            "Você pisca.\n\n" +
+            "A criança não está mais olhando para você.\n\n" +
+            "Agora ela está olhando para uma porta no final do corredor.\n\n" +
+            "Você olha para o corredor.\n\n" +
+            "A porta está fechada.\n\n" +
+            "Você volta a olhar para o retrato.\n\n" +
+            "A criança está olhando para você novamente.",
+
+        opcoes: [
+
+            {
+                texto: "🪜 Subir para o corredor",
+                acao: () => mostrarCena("corredor")
+            },
+
+            {
+                texto: "🏃 Ficar na sala",
+                acao: () => mostrarCena("sala")
+            }
+
+        ]
+
+    },
+
+
+    /* =================================================
+       CHAVE
+       ================================================= */
+
+    chave: {
+
+        icone: "🔑",
+
+        local: "Sala",
+
+        titulo: "Uma chave escondida",
+
+        imagem: "🔑",
+
+        texto:
+            "Atrás do bilhete existe uma pequena chave enferrujada.\n\n" +
+            "Ela possui o número 13 gravado nela.\n\n" +
+            "Talvez abra alguma porta no andar superior.",
+
+        opcoes: [
+
+            {
+                texto: "🪜 Subir as escadas",
+                acao: () => mostrarCena("corredor")
+            },
+
+            {
+                texto: "🕯️ Continuar investigando a sala",
+                acao: () => mostrarCena("sala")
+            }
+
+        ]
+
+    },
+
+
+    /* =================================================
+       PORTA DE SAÍDA
+       ================================================= */
+
+    portaSaida: {
+
+        icone: "🚪",
+
+        local: "Entrada",
+
+        titulo: "A saída",
+
+        imagem: "🔒",
+
+        texto:
+            "Você tenta abrir a porta.\n\n" +
+            "Ela está trancada.\n\n" +
+            "Não existe maçaneta do lado de dentro.\n\n" +
+            "No metal existe apenas uma frase gravada:\n\n" +
+            "\"Primeiro encontre o quarto.\"",
+
+        opcoes: [
+
+            {
+                texto: "🪜 Procurar o quarto",
+                acao: () => mostrarCena("corredor")
+            },
+
+            {
+                texto: "🔨 Forçar a porta",
+                acao: () => {
+
+                    perderSanidade(10);
+
+                    mostrarCena("portaTrancada");
+
+                }
+            }
+
+        ]
+
+    },
+
+
+    /* =================================================
+       CORREDOR
+       ================================================= */
+
+    corredor: {
+
+        icone: "🕯️",
+
+        local: "Segundo andar",
+
+        titulo: "O corredor",
+
+        imagem: "🚪",
+
+        texto:
+            "O segundo andar é completamente escuro.\n\n" +
+            "Você liga a lanterna.\n\n" +
+            "Existem quatro portas.\n\n" +
+            "101.\n" +
+            "102.\n" +
+            "103.\n\n" +
+            "E uma quarta porta no final do corredor.\n\n" +
+            "Nela está escrito apenas:\n\n" +
+            "13.",
+
+        opcoes: [
+
+            {
+                texto: "🚪 Abrir quarto 101",
+                acao: () => mostrarCena("quarto101")
+            },
+
+            {
+                texto: "🚪 Abrir quarto 102",
+                acao: () => mostrarCena("quarto102")
+            },
+
+            {
+                texto: "🚪 Abrir quarto 103",
+                acao: () => mostrarCena("quarto103")
+            },
+
+            {
+                texto: "🔑 Tentar a chave no quarto 13",
+                acao: () => {
+
+                    if (possuiItem("chave")) {
+
+                        jogador.flags.abriuQuarto13 = true;
+
+                        mostrarCena("quarto13");
+
+                    } else {
+
+                        mostrarNotificacao(
+                            "Você precisa encontrar uma chave."
+                        );
+
+                    }
+
+                }
+            }
+
+        ]
+
+    },
+
+
+    /* =================================================
+       QUARTO 101
+       ================================================= */
+
+    quarto101: {
+
+        icone: "🛏️",
+
+        local: "Quarto 101",
+
+        titulo: "O quarto vazio",
+
+        imagem: "🛏️",
+
+        texto:
+            "O quarto está vazio.\n\n" +
+            "Há apenas uma cama e um armário.\n\n" +
+            "A cama parece ter sido usada recentemente.\n\n" +
+            "Você encontra marcas de mãos na parede.",
+
+        opcoes: [
+
+            {
+                texto: "🚪 Abrir o armário",
+                acao: () => mostrarCena("armario")
+     
